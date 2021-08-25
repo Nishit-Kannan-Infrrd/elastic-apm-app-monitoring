@@ -31,7 +31,7 @@ services:
     environment:
       - discovery.type=single-node
     volumes:
-      - vol_es:/usr/share/elasticsearch/data
+      - apm_es_vol:/usr/share/elasticsearch/data
     healthcheck:
       interval: 20s
       retries: 10
@@ -107,7 +107,7 @@ services:
 volumes:
   pg_apm_vol:
   pgadmin_apm_vol:
-  vol_es:
+  apm_es_vol:
 networks:
   backend:
   monitoring:
