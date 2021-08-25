@@ -1,19 +1,30 @@
 version: '3.7'
 services:
   db:
-    container_name: pg_apm
     image: postgres:11
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-    ports:
-      - "5431:5432"
+    #ports:
+    #  - "5431:5432"
     networks:
       - backend
     volumes:
       - pg_apm_vol:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: nishit@infrrd.ai
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    ports:
+      - "5430:80"
+    networks:
+      - backend
+    volumes:
+      - pgadmin_apm_vol:/var/lib/pgadmin
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
     restart: on-failure
@@ -52,8 +63,6 @@ services:
       - kibana
     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
     cap_drop: ["ALL"]
-    ports:
-      - "8200:8200"
     command: >
        apm-server -e
          -E apm-server.rum.enabled=true
@@ -72,6 +81,13 @@ services:
     build:
       context: ../.
       dockerfile: Dockerfile
+      args:
+        - "ARG_SERVICE_NAME=library"
+        - "ARG_APM_SERVER_URL=http://localhost:8200"
+        - "ARG_APPLICATION_PACKAGES=org.test"
+        - "ARG_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5431/postgres"
+        - "ARG_DB_USERNAME=postgres"
+        - "ARG_DB_PASSWORD=postgres"
     image: libraryapp
     ports:
       - "8080:8080"
