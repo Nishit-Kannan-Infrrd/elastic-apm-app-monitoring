@@ -6,4 +6,5 @@ import com.crazynerve.library.entities.Book;
 public interface BooksService
 {
     Book addBook(Book book);
+    Book getBook(String bookId);
 }

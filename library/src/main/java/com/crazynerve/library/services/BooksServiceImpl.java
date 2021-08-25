@@ -29,4 +29,11 @@ public class BooksServiceImpl implements BooksService
         Book newBook = booksRepository.save( book );
         return newBook;
     }
+
+
+    @Override
+    public Book getBook( String bookId )
+    {
+        return booksRepository.findById( bookId ).orElse( new Book() );
+    }
 }
