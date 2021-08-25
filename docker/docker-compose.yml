@@ -17,7 +17,7 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: nishit@infrrd.ai
+      PGADMIN_DEFAULT_EMAIL: test@apm.com
       PGADMIN_DEFAULT_PASSWORD: pgadmin
     ports:
       - "5430:80"
