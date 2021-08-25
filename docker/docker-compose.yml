@@ -31,7 +31,7 @@ services:
     image: docker.elastic.co/kibana/kibana:7.4.0
     restart: on-failure
     volumes:
-      - /Users/nishit/work/kibana_conf/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     healthcheck:
       interval: 10s
       retries: 20
@@ -47,13 +47,13 @@ services:
   apm:
     image: docker.elastic.co/apm/apm-server:7.4.0
     restart: on-failure
-    ports:
-      - "8200:8200"
     depends_on:
       - es
       - kibana
     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
     cap_drop: ["ALL"]
+    ports:
+      - "8200:8200"
     command: >
        apm-server -e
          -E apm-server.rum.enabled=true
@@ -68,6 +68,26 @@ services:
       test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
     networks:
       - monitoring
+  library:
+    build:
+      context: ../.
+      dockerfile: Dockerfile
+    image: libraryapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - apm
+    environment:
+      SERVICE_NAME: library
+      APM_SERVER_URL: http://apm:8200
+      APPLICATION_PACKAGES: com.crazynerve
+      DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    networks:
+      - monitoring
+      - backend
 volumes:
   pg_apm_vol:
   pgadmin_apm_vol:
