@@ -20,3 +20,4 @@ App monitoring using elastic APM
     "author": "Mr. B",
     "title": "Mr. B book"
 }'`
+* Navigate to [Kibana APM](http://localhost:5601/app/apm#/) and click on the library service. The transaction should be present.
